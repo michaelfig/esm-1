@@ -4,9 +4,15 @@
   "version": "0.0.0-alpha.1",
   "author": "Saleh Abdel Motaal <smotaal@grasppe.com>",
   "repository": "https://github.com/SMotaal/esm.git",
-  "exports": {},
+  "exports": "index.js",
+  "scripts": {
+    "nes": "tasks/node-esm",
+    "nex": "node --no-warnings --experimental-modules --loader ./node/loader/legacy",
+    "nex-trace": "node --no-warnings --experimental-modules --loader ./node/loader/legacy#trace",
+    "specs": "$npm_package_scripts_nex ./tasks/specs.js",
+    "test": "pushd tests && yarn test || popd"
+  },
   "bin": {
-    "specs": "tasks/specs.js",
     "nes": "tasks/node-esm",
     "nex": "tasks/node-exm"
   },

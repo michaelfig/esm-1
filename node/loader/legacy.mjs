@@ -1,36 +1,42 @@
-import {existsSync, readFileSync} from 'fs';
+﻿import {existsSync, readFileSync} from 'fs';
 import {builtinModules} from 'module';
-import {cwd, argv} from 'process';
+import {cwd, argv, argv0, execArgv} from 'process';
 
 const ROOT = `file://`;
-const SCOPE = `${new URL('../../../../', import.meta.url)}`;
-const SCOPES = ['/common/loader/', '/common/node/loader/'].map(s => `${SCOPE}${s.slice(1)}`);
+const SCOPE = `${new URL('../../', import.meta.url)}`;
+const SCOPES = ['/loader/', '/node/loader/'].map(s => `${SCOPE}${s.slice(1)}`);
 
 let main;
 const mainArgv = argv[1];
 const Scoped = url =>
   (url && (url = `${url}`).startsWith(SCOPE) && SCOPES.find(s => url.startsWith(s)) && url) || undefined;
 
-const resolver = new class Resolver {
+const tracing = /\?(?:.*&)?\btrace\b/.test(import.meta.url);
+
+const resolver = new class LegacyNodeResolver {
   async resolve(specifier, referrer, resolve) {
     let resolved, url, format, trace;
-    const {initialized = (this.initialized = this.initialize())} = this;
-    if (referrer && Scoped(referrer)) {
-      trace = 'scoped';
-      ({url, format} = resolved = await resolve(specifier, referrer));
-      Scoped(url) && format === 'cjs' && (resolved.format = 'esm');
-      return resolved;
+    try {
+      const { initialized = (this.initialized = this.initialize()) } = this;
+      if (referrer && Scoped(referrer)) {
+        trace = 'scoped';
+        ({ url, format } = resolved = await resolve(specifier, referrer));
+        Scoped(url) && format === 'cjs' && (resolved.format = 'esm');
+        return resolved;
+      }
+      if (initialized && initialized.then) {
+        trace = 'deferred';
+        return (resolved = await (await initialized)(specifier, referrer, resolve));
+      }
+      return this.resolver(specifier, referrer, resolve);
+    } finally {
+      tracing && trace && console.log(trace, {specifier, referrer, resolve, url, format});
     }
-    if (initialized && initialized.then) {
-      trace = 'deferred';
-      return (resolved = await (await initialized)(specifier, referrer, resolve));
-    }
-    return this.resolver(specifier, referrer, resolve);
   }
 
   async initialize() {
-    const {ESMResolver} = await import('../esm-resolver.js');
-    const resolver = (this.resolver = class extends ESMResolver {
+    const {NodeResolver} = await import('./resolver.js');
+    const resolver = (this.resolver = class extends NodeResolver {
       isBuiltin(specifier) {
         return builtinModules.includes(specifier);
       }

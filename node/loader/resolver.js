@@ -8,7 +8,7 @@ const Defaults = {format: 'legacy'};
 const Formats = {ESM: 'esm', Legacy: 'legacy'};
 const Messages = {InvalidExports: `invalid package exports type`};
 
-export class ESMResolver extends Resolver {
+export class NodeResolver extends Resolver {
   emitWarning(type, scope, message = Messages[type]) {
     if (message && type && typeof type === 'string') {
       const {

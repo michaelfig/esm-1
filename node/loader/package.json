@@ -1,5 +1,6 @@
 {
   "private": true,
+  "main": "./legacy.mjs",
   "exports": {
     "./esm-resolver.mjs": "./esm-resolver.mjs"
   }

@@ -1,4 +1,10 @@
 {
   "private": true,
-  "exports": {}
+  "exports": {},
+  "scripts": {
+    "test": "yarn && yarn nex ../tasks/specs.js"
+  },
+  "dependencies": {
+    "@smotaal/esm": ".."
+  }
 }
