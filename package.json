@@ -1,13 +1,16 @@
 {
   "private": true,
-  "name": "@esm/common",
-  "version": "0.0.0",
+  "name": "@smotaal/esm",
+  "version": "0.0.0-alpha.1",
   "author": "Saleh Abdel Motaal <smotaal@grasppe.com>",
+  "repository": "https://github.com/SMotaal/esm.git",
   "exports": {},
   "bin": {
     "specs": "tasks/specs.js",
     "nes": "tasks/node-esm",
-    "nes1": "tasks/node-esm-1",
     "nex": "tasks/node-exm"
+  },
+  "devDependencies": {
+    "prettier": "*"
   }
 }

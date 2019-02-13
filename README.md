@@ -1,1 +1,3 @@
-# @esm/common (all-things-esm)
+# @smotaal/esm
+
+Everything needed to work on pure ESM projects.
