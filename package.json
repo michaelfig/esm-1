@@ -1,9 +1,12 @@
 {
   "private": true,
   "name": "@smotaal/esm",
-  "version": "0.0.0-alpha.1",
-  "author": "Saleh Abdel Motaal <smotaal@grasppe.com>",
+  "description": "smotaal.io/esm",
+  "version": "0.0.0-alpha.2",
+  "author": "Saleh Abdel Motaal <saleh@grasppe.com>",
   "repository": "https://github.com/SMotaal/esm.git",
+  "license": "MIT",
+	"type": "module",
   "exports": "index.js",
   "scripts": {
     "nes": "tasks/node-esm",
@@ -16,7 +19,10 @@
     "nes": "tasks/node-esm",
     "nex": "tasks/node-exm"
   },
-  "devDependencies": {
-    "prettier": "*"
-  }
+	"devDependencies": {
+		"@types/node": "*",
+		"prettier": "*",
+		"rollup": "*",
+		"typescript": "*"
+	}
 }
