@@ -4,7 +4,7 @@ import {cwd, argv, argv0, execArgv} from 'process';
 
 const ROOT = `file://`;
 const SCOPE = `${new URL('../../', import.meta.url)}`;
-const SCOPES = ['/loader/', '/node/loader/'].map(s => `${SCOPE}${s.slice(1)}`);
+const SCOPES = ['/common/loader/', '/node/loader/'].map(s => `${SCOPE}${s.slice(1)}`);
 
 let main;
 const mainArgv = argv[1];

@@ -1,6 +1,6 @@
-import {Resolver} from '../../loader/resolver.js';
-import {Packages} from '../../loader/packages.js';
-import {SpecifierError, PackageNameError, LocationError, ExtensionError, validURLFrom} from '../../loader/helpers.js';
+import {Resolver} from '../../common/loader/resolver.js';
+import {Packages} from '../../common/loader/packages.js';
+import {SpecifierError, PackageNameError, LocationError, ExtensionError, validURLFrom} from '../../common/loader/helpers.js';
 
 let DEBUG;
 
