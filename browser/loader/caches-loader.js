@@ -1,4 +1,4 @@
-import {Loader} from '../../loader/base-loader.js'
+import {Loader} from '../../common/loader/base-loader.js'
 
 /**
  * Caches (service worker) based loader for Browsers
