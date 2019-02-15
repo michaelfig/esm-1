@@ -2,7 +2,7 @@
   "private": true,
   "exports": {},
   "scripts": {
-    "test": "yarn && yarn nex ../tasks/specs.js"
+    "test": "yarn --force --check-files && yarn nex:trace ../tasks/specs.js"
   },
   "dependencies": {
     "@smotaal/esm": ".."
