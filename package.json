@@ -9,14 +9,14 @@
   "type": "module",
   "exports": "index.js",
   "scripts": {
-    "nes": "tasks/node-esm",
+    "nes": "node/node-esm",
     "nex": "node --no-warnings --experimental-modules --loader ./node/loader/legacy",
     "nex:trace": "node --no-warnings --experimental-modules --loader ./node/loader/trace",
     "specs": "$npm_package_scripts_nex ./tasks/specs.js",
     "test": "pushd tests && yarn test || popd"
   },
   "bin": {
-    "nes": "tasks/node-esm",
+    "nes": "node/node-esm",
     "nex": "tasks/node-exm",
     "nex:trace": "tasks/node-exm-trace"
   },
