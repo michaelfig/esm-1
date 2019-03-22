@@ -1,5 +1,7 @@
 {
   "name": "esm",
+  "type": "module",
+  "mode": "esm",
   "exports": {},
   "scripts": {
     "install": "exit 1;"

@@ -1,5 +1,6 @@
 {
   "private": true,
+  "type": "module",
   "exports": {},
   "scripts": {
     "test": "yarn --force --check-files && yarn nex:trace ../tasks/specs.js"
