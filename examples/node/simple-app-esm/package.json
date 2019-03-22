@@ -1,0 +1,7 @@
+﻿{
+  "name": "simple-app-esm",
+  "mode": "esm",
+  "type": "module",
+  "main": "app.js",
+  "exports": {}
+}
