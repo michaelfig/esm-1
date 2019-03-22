@@ -20,10 +20,10 @@
     "nex": "tasks/node-exm",
     "nex:trace": "tasks/node-exm-trace"
   },
-	"devDependencies": {
-		"@types/node": "*",
-		"prettier": "*",
-		"rollup": "*",
-		"typescript": "*"
+  "devDependencies": {
+    "@types/node": "*",
+    "prettier": "*",
+    "rollup": "*",
+    "typescript": "*"
   }
 }
