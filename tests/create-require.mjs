@@ -38,8 +38,6 @@ for (const path of process.argv.includes('-t2') ? paths.reverse() : paths) {
  *       .resolve('./package.json')
  *         => '‹scope›/esm/package.json'
  *
- *
- *
  *   process.chdir('‹scope›/esm/tests/')
  *
  *     createRequireFromPath('.')
@@ -47,21 +45,18 @@ for (const path of process.argv.includes('-t2') ? paths.reverse() : paths) {
  *         => '‹scope›/esm/package.json'
  *
  ******************************************************************************
- *
  * $ node --experimental-modules esm/tests/create-require.mjs -t2
  *
- * process.chdir('‹scope›/esm/tests/')
+ *   process.chdir('‹scope›/esm/tests/')
  *
- *   createRequireFromPath('.')
- *     .resolve('./package.json')
- *       => '‹scope›/esm/tests/package.json'
+ *     createRequireFromPath('.')
+ *       .resolve('./package.json')
+ *         => '‹scope›/esm/tests/package.json'
  *
+ *   process.chdir('‹scope›/esm/')
  *
- *
- * process.chdir('‹scope›/esm/')
- *
- *   createRequireFromPath('.')
- *     .resolve('./package.json')
- *       => '‹scope›/esm/tests/package.json'
+ *     createRequireFromPath('.')
+ *       .resolve('./package.json')
+ *         => '‹scope›/esm/tests/package.json'
  *
  ******************************************************************************/
