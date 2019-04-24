@@ -3,30 +3,49 @@ import {fileURLToPath} from 'url';
 
 const specifier = './package.json';
 const [scope, ...paths] = ['../../', '../', './'].map((path, index) =>
-  // Adding '/index' since createRequireFromPath('…/') drops trailing slash
-  fileURLToPath(new URL(index ? path.replace(/\/([?#].*?|)$/, '/index$1') : path, import.meta.url)),
+  fileURLToPath(new URL(index ? path : path, import.meta.url)),
 );
 const sanitize = path => path.replace(scope, '‹scope›/');
 
-for (const path of paths) {
-  console.group('\ncreateRequireFromPath(%o)\n  .resolve(%o)', sanitize(path), specifier);
+for (let path of paths) {
+  process.chdir(path);
+  console.group('\nprocess.chdir(%o)', sanitize(path));
+  console.log();
   try {
-    console.log(`  => %o`, sanitize(createRequireFromPath(path).resolve(specifier)));
+    const require = createRequireFromPath('.');
+    console.log(
+      `createRequireFromPath(%o)\n  .resolve(%o)\n    => %o`,
+      '.',
+      specifier,
+      sanitize(require.resolve(specifier)),
+    );
   } catch (exception) {
-    console.warn(`  => %s`, `${exception}`.split('\n', 1)[0]);
+    console.warn(
+      `createRequireFromPath(%o)\n  .resolve(%o)\n    => %o`,
+      '.',
+      specifier,
+      `${exception}`.split('\n', 1)[0],
+    );
   }
+  console.log();
   console.groupEnd();
 }
 
 /*******************************************************************************
  * @console
  *
- * createRequireFromPath('‹scope›/esm/index')
- *   .resolve('./package.json')
- *     => '‹scope›/esm/package.json'
+ * process.chdir('‹scope›/esm/')
  *
- * createRequireFromPath('‹scope›/esm/tests/index')
- *   .resolve('./package.json')
- *     => '‹scope›/esm/tests/package.json'
+ *   createRequireFromPath('.')
+ *     .resolve('./package.json')
+ *       => '‹scope›/esm/package.json'
+ *
+ *
+ *
+ * process.chdir('‹scope›/esm/tests/')
+ *
+ *   createRequireFromPath('.')
+ *     .resolve('./package.json')
+ *       => '‹scope›/esm/package.json'
  *
  ******************************************************************************/
