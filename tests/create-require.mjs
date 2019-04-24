@@ -5,9 +5,9 @@ const specifier = './package.json';
 const [scope, ...paths] = ['../../', '../', './'].map((path, index) => fileURLToPath(new URL(path, import.meta.url)));
 const sanitize = path => path.replace(scope, '‹scope›/');
 
-for (let path of paths) {
+for (const path of process.argv.includes('-t2') ? paths.reverse() : paths) {
   process.chdir(path);
-  console.group('\nprocess.chdir(%o)', sanitize(path));
+  console.group('\nprocess.chdir(%o)', sanitize(process.cwd()));
   console.log();
   try {
     const require = createRequireFromPath('.');
@@ -30,20 +30,38 @@ for (let path of paths) {
 }
 
 /*******************************************************************************
- * @console
+ * $ node --experimental-modules esm/tests/create-require.mjs
  *
- * process.chdir('‹scope›/esm/')
+ *   process.chdir('‹scope›/esm/')
  *
- *   createRequireFromPath('.')
- *     .resolve('./package.json')
- *       => '‹scope›/esm/package.json'
+ *     createRequireFromPath('.')
+ *       .resolve('./package.json')
+ *         => '‹scope›/esm/package.json'
  *
  *
+ *
+ *   process.chdir('‹scope›/esm/tests/')
+ *
+ *     createRequireFromPath('.')
+ *       .resolve('./package.json')
+ *         => '‹scope›/esm/package.json'
+ *
+ ******************************************************************************
+ *
+ * $ node --experimental-modules esm/tests/create-require.mjs -t2
  *
  * process.chdir('‹scope›/esm/tests/')
  *
  *   createRequireFromPath('.')
  *     .resolve('./package.json')
- *       => '‹scope›/esm/package.json'
+ *       => '‹scope›/esm/tests/package.json'
+ *
+ *
+ *
+ * process.chdir('‹scope›/esm/')
+ *
+ *   createRequireFromPath('.')
+ *     .resolve('./package.json')
+ *       => '‹scope›/esm/tests/package.json'
  *
  ******************************************************************************/
