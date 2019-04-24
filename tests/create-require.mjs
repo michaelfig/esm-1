@@ -2,7 +2,7 @@
 import {fileURLToPath} from 'url';
 
 const specifier = './package.json';
-const [scope, ...paths] = ['../../', '../', './'].map((path, index) => fileURLToPath(new URL(path, import.meta.url)));
+const [scope, ...paths] = ['../../', '../', './'].map(path => fileURLToPath(new URL(path, import.meta.url)));
 const sanitize = path => path.replace(scope, '‹scope›/');
 
 for (const path of process.argv.includes('-t2') ? paths.reverse() : paths) {
