@@ -1,8 +1,13 @@
 import {parsedObjectFrom} from './helpers.js';
 import {SourceRecord} from './source-record.js';
 
-const ExportsTypes = Object.freeze(['undefined', 'string', 'object']);
-const MainTypes = Object.freeze(['undefined', 'string']);
+const TypeOfExports = Object.freeze(['string', 'object']);
+const TypeOfMain = Object.freeze(['string']);
+const TypeOfType = Object.freeze(['string']);
+const Types = Object.freeze(['module']);
+
+const SUPPORTS_PACKAGE_EXPORTS = false;
+const SUPPORTS_PACKAGE_TYPE = true;
 
 /**
  * Loader-specific record for a package.
@@ -43,39 +48,44 @@ export class PackageRecord extends SourceRecord {
    * @memberof PackageRecord
    */
   static fromSource(source) {
-    let // Empty source returns { exists: false, isValid: true }
-      exists = source !== undefined,
-      isValid = exists || source === undefined, // !exists
-      hasMain = false,
-      isESM = false,
-      main = '',
-      exports;
+    let exists, isValid, isESM, main, exports, type;
+
+    isValid = (exists = source !== undefined) || source === undefined;
+    isESM = false;
 
     if (exists) {
       const parsedSource = parsedObjectFrom(source);
 
       // Invalid source returns { exists: true, isValid: false }
       if ((isValid = !!parsedSource)) {
-        ({main, exports} = parsedSource);
+        ({main, exports, type} = parsedSource);
 
-        // Ensures hasMain ? main != '' : main = ''
-        const mainType = (main === null && 'null') || typeof main;
-        const validMain = MainTypes.includes(mainType);
-        hasMain = (main && validMain) || false;
-        hasMain || (main = '');
+        // TODO: Is empty/malformed considered valid
 
-        // Ensures isESM ? esm = {...} : esm = undefined;
-        const exportsType = (exports === null && 'null') || typeof exports;
-        const validExports = ExportsTypes.includes(exportsType);
-        isESM = (exports && validExports) || false;
-        isESM || (exports = undefined);
+        type === undefined || TypeOfType.includes(typeof type) || (type = void (isValid = false));
 
-        // Valid regardless of main or exports being defined
-        isValid = validMain && validExports;
+        main === undefined || TypeOfMain.includes(typeof main) || (main = void (isValid = false));
+
+        exports === undefined || TypeOfExports.includes(typeof exports) || (exports = void (isValid = false));
+
+        isESM = !(
+          (!SUPPORTS_PACKAGE_TYPE || type !== 'module') &&
+          (!SUPPORTS_PACKAGE_EXPORTS || exports === undefined)
+        );
       }
     }
 
-    return new PackageRecord({exists, isValid, hasMain, isESM, main, exports});
+    return new PackageRecord({
+      exists,
+      isValid,
+      hasMain: main !== undefined,
+      hasExports: exports !== undefined,
+      hasType: type !== undefined,
+      isESM,
+      main,
+      exports,
+      type,
+    });
   }
 
   [Symbol.for('nodejs.util.inspect.custom')](depth, {stylize = String} = {}) {
