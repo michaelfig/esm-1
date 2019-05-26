@@ -7,12 +7,11 @@
   "repository": "https://github.com/SMotaal/esm.git",
   "license": "MIT",
   "type": "module",
-  "exports": "index.js",
   "scripts": {
     "nes": "node/node-esm",
-    "nex": "node --no-warnings --experimental-modules --loader ./node/loader/legacy",
-    "nex:trace": "node --no-warnings --experimental-modules --loader ./node/loader/trace",
-    "specs": "$npm_package_scripts_nex ./tasks/specs.js",
+    "nex": "node --no-warnings --experimental-modules --loader ./node/loader/legacy.mjs",
+    "nex:trace": "node --no-warnings --experimental-modules --loader ./node/loader/trace.mjs",
+    "specs": "$npm_package_scripts_nex_trace ./tasks/specs.js",
     "test": "pushd tests && yarn test || popd"
   },
   "bin": {

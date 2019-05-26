@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "tests",
   "type": "module",
   "exports": {},
   "scripts": {
