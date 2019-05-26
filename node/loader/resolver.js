@@ -1,11 +1,18 @@
 import {Resolver} from '../../common/loader/resolver.js';
 import {Packages} from '../../common/loader/packages.js';
-import {SpecifierError, PackageNameError, LocationError, ExtensionError, validURLFrom} from '../../common/loader/helpers.js';
+import {
+  SpecifierError,
+  PackageNameError,
+  LocationError,
+  ExtensionError,
+  validURLFrom,
+} from '../../common/loader/helpers.js';
+import {STANDARD_FORMAT as ESM, COMMONJS_FORMAT as CJS, BUILTIN_FORMAT as BUILTIN} from './constants.mjs';
 
 let DEBUG;
 
-const Defaults = {format: 'legacy'};
-const Formats = {ESM: 'esm', Legacy: 'legacy'};
+const Defaults = {format: CJS};
+const Formats = {ESM, CJS};
 const Messages = {InvalidExports: `invalid package exports type`};
 
 export class NodeResolver extends Resolver {
@@ -217,7 +224,7 @@ export class NodeResolver extends Resolver {
           continue;
         }
 
-        const {exists, isValid, isESM, format = isESM ? 'ESM' : 'Legacy'} = packageRecord;
+        const {exists, isValid, isESM, format = isESM ? ESM : CJS} = packageRecord;
 
         DEBUG && (parents.seen = {...parents.seen, [parentURL]: packageRecord});
 

@@ -1,6 +1,7 @@
 ﻿import {existsSync, readFileSync} from 'fs';
 import {builtinModules} from 'module';
 import {cwd, argv, argv0, execArgv} from 'process';
+import {STANDARD_FORMAT as ESM, COMMONJS_FORMAT as CJS, BUILTIN_FORMAT as BUILTIN} from './constants.mjs';
 
 const ROOT = `file://`;
 const SCOPE = `${new URL('../../', import.meta.url)}`;
@@ -13,15 +14,15 @@ const Scoped = url =>
 
 const tracing = /\?(?:.*&)?\btrace\b/.test(import.meta.url);
 
-const resolver = new class LegacyNodeResolver {
+const resolver = new (class LegacyNodeResolver {
   async resolve(specifier, referrer, resolve) {
     let resolved, url, format, trace;
     try {
-      const { initialized = (this.initialized = this.initialize()) } = this;
+      const {initialized = (this.initialized = this.initialize())} = this;
       if (referrer && Scoped(referrer)) {
         trace = 'scoped';
-        ({ url, format } = resolved = await resolve(specifier, referrer));
-        Scoped(url) && format === 'cjs' && (resolved.format = 'esm');
+        ({url, format} = resolved = await resolve(specifier, referrer));
+        Scoped(url) && format === CJS && (resolved.format = ESM);
         return resolved;
       }
       if (initialized && initialized.then) {
@@ -60,7 +61,7 @@ const resolver = new class LegacyNodeResolver {
 
         ({url, format} = resolved = await this.resolveSpecifier(specifier, referrer, isMain));
         (!isMain &&
-          ((format === 'builtin' || format === 'legacy') && ({url, format} = resolved = resolve(specifier, referrer)))) ||
+          ((format === BUILTIN || format === CJS) && ({url, format} = resolved = resolve(specifier, referrer)))) ||
           (resolved.url = `${url}`);
         isMain && (resolved.main = true);
         trace = (resolved && (format || 'unknown')) || 'unresolved';
@@ -80,6 +81,6 @@ const resolver = new class LegacyNodeResolver {
     this.initialized = true;
     return resolver;
   }
-}();
+})();
 
 export const resolve = (...args) => resolver.resolve(...args);
