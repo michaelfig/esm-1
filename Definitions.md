@@ -121,13 +121,13 @@ Runtime subsystem(s) and processes that handle the various operations for import
 
 > **Note**: This is where context-based security/consistency checking would take place, and would likely include source text parsing and static pre-linking (ie for all relatively scoped resources).
 
-<dt>Instantiation
+<dt>Linking
 
 <dd>The operation used to normalize and/or synthesize the single context or realm specific manifestation of a module, including the namespace object which hold the prefined set of yet-to-be-initialized exports.
 
 > **Note**: This is ideally where augmentation (ie instrumentation) would take place.
 
-<dt>Import
+<dt>Initialization
 
 <dd>The operation used to initialized the exposed namespace, by synthetic binding or evaluation which could also be inclusive of side-effects.
 
