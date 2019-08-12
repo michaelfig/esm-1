@@ -135,9 +135,16 @@ Runtime subsystem(s) and processes that handle the various operations for import
 
 </dl>
 
-<dt>Module Loading Extensions
+<dt>Module Loading Extension
 <dd>
 
-Opt-in extensions to one or more functions of the module subsystem, usually instantiated during the boostrapping stage of the module loading controller for the context and/or realm, to provide well-defined, chainable and deterministic alterations (ie improvements) from the default operation(s).
+Opt-in handlers for one or more module loading operations, usually instantiated during the boostrapping stage of the module loading controller for the context and/or realm, to provide well-defined, chainable and deterministic alterations (ie improvements) from the default operation(s).
+
+<dt>Module Scopes
+<dd>
+
+A normalized path-like module identifier denomination used to enforce artificial encapsulation for security/consistency considerations during the various module loading operations.
+
+> **Note**: Scopes provide a parallel abstraction for packages and/or origins (or service worker scopes) where it becomes possible to safely reason about requirements for remapping, instrumentation, and/or attenuation, while avoiding unintentional leakage of privileged resource-related details extranous to the effective fulfillment of these auxiliary loading behaviors.
 
 </dl>
