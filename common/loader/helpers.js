@@ -22,11 +22,18 @@ export function parsedObjectFrom(source) {
 
 /// Location
 
+export const PrefixPart = /:(?:\/*?(?=\/)|).*$/;
+export const SchemePart = /(^[a-z]+:(?=[/]{2}))/i;
 export const EntryPart = /([^/]*(?:[#?].*)?$)/;
 export const DirectoryPart = /(^[^#?]*\/)/;
 export const PathnameParts = /^([^#?]*\/)([^/]*)$/;
-export const SchemePart = /(^[a-z]+:(?=[/]{2}))/i;
-export const StandardSchemes = Object.freeze(['file', 'https', 'http']);
+export const StandardSchemes = Object.freeze(
+  new (class extends Array {
+    includes(item) {
+      return super.includes(!item ? item : PrefixPart[Symbol.replace](item, '').toLowerCase());
+    }
+  })('file', 'https', 'http'),
+);
 
 /**
  * Ensures url is or constructs into a valid URL object
@@ -82,6 +89,12 @@ export function entryURLFrom(url, entryName) {
 export async function readFromURL(url, options = {'no-referrer': true}) {
   const href = (url && url.href) || `${url}`;
   let scheme = (url && url.protocol) || (SchemePart.exec(href) || '')[0] || '';
+  // console.log({
+  //   scheme,
+  //   href,
+  //   isStandardScheme: StandardSchemes.includes(scheme),
+  //   options,
+  // });
   if (typeof fetch === 'function' && StandardSchemes.includes(scheme)) {
     return `${await (await fetch(url, options)).text()}`;
   }
