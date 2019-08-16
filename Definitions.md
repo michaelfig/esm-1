@@ -135,16 +135,92 @@ Runtime subsystem(s) and processes that handle the various operations for import
 
 </dl>
 
-<dt>Module Loading Extension
+<dt>Module Loader Architecture
+
 <dd>
 
-Opt-in handlers for one or more module loading operations, usually instantiated during the boostrapping stage of the module loading controller for the context and/or realm, to provide well-defined, chainable and deterministic alterations (ie improvements) from the default operation(s).
+The abstract framework of constructs and routines relevant to the design and implementation of efficient, composable, and, safe module loaders.
 
-<dt>Module Scopes
+<dl>
+
+<dt>
+
+Loader Extension (aka Custom/User Loader)
+
 <dd>
 
-A normalized path-like module identifier denomination used to enforce artificial encapsulation for security/consistency considerations during the various module loading operations.
+Opt-in handlers for one or more module loading operations, usually instantiated during the boostrapping stage of the module loading controller for the container, to provide well-defined, chainable and deterministic alterations (ie improvements) from the default operation(s), involving:
+
+- **`extension` _LogicalExtension_** (aka **_Resolver_**)
+
+  A `container` attaches to single `scope` that encompasses one or more `module` record(s) mapped by their unique `moduleId`, and, recursively, zero or more `scope` record(s) mapped by their unique `scopeId`.
+
+  > **Note**: An actual `resolver` will likely adopts actual `resolution hooks` with either `define` and/or `resolve` depending on the specific module loader architecture — for instance, one architecture being explored for safe modules considers custom handlers for `resolve` only, with `define` handlers being either omitted or restricted for internal use.
+
+  - **`handler` _Scope:Definition_**
+  - **`handler` _Module:Definition_**
+  - **`handler` _Scope:Resolution_**
+  - **`handler` _Module:Resolution_**
+
+- **`extension` _ResourceExtension_** (aka **_Transporter_**)
+
+  A `resource` contains its `body` that represents its `content` and for which there is a single `source` manifestation (ie source text where loaders are concerned).
+
+  > **Note**: An actual `transporter` will likely adopt for _a subset of_ and/or _a more streamlined_ definition for the actual `transport hooks`.
+
+  - **`handler` _Location_**
+    1. **`handler` _Resource:Authorization_**
+    2. **`handler` _Resource:Allocation_**
+       - **`handler` _Resource:Searching_**
+       - **`handler` _Resource:Validation_**
+  - **`extension` _Retrieval_**
+    1. **`handler` _Resource:Reading_**
+    2. **`handler` _Source:Decryption_**
+    3. **`handler` _Source:Compilation_**
+       - **`handler` _Source:Analysis_**
+       - **`handler` _Source:Transformation_**
+  - **`extension` _Storage_**
+
+    1. **`handler` _Source:Generation_**
+       - **`handler` _Source:Mutation_**
+       - **`handler` _Source:Collation_**
+       - **`handler` _Source:Augmentation_**
+       - **`handler` _Source:Annotation_**
+    2. **`handler` _Source:Encryption_**
+    3. **`handler` _Resource:Writing_**
+
+       > **Note**: The body of the written resource or the lack of it determines the resource writing mode, ie `append`, `write` or `delete`.
+
+- **`extension` _RuntimeExtension_** (aka **_Instrumenter_**)
+
+  … TBD
+
+<dt>Loader Scope
+
+<dd>
+
+Scope adds a layer of abstraction needed for separating module and actual resource concerns (locations, structures and/or formats), relating them symbolically through package encapsulations interdependencies.
 
 > **Note**: Scopes provide a parallel abstraction for packages and/or origins (or service worker scopes) where it becomes possible to safely reason about requirements for remapping, instrumentation, and/or attenuation, while avoiding unintentional leakage of privileged resource-related details extranous to the effective fulfillment of these auxiliary loading behaviors.
 
+Loader Scope is the abstraction used to define a partially-opaque mapping between a unique bare-specifier prefix string and the actual location it encapsulates and/or remaps in some capacity, involving:
+
+- **`record` _ScopeRecord_**
+
+  - **`unique` _ScopeId_**
+
+  - **`string` _ScopedLocation_**
+
+  - **`record` _ParentScope_**
+
+  - **`records` _ScopedMappings_**
+
+    - **`records` _ModuleMappings_**
+
+      - **`unique` _ModuleId_**
+
+    - **`records` _ScopeMappings_**
+
+
+</dl>
 </dl>
