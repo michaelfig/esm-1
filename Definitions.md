@@ -113,11 +113,18 @@ Runtime subsystem(s) and processes that handle the various operations for import
 
 ```js
 /**
- * @param toImport exact string argument to `import`
- * @param referrer base moduleId for the importing module
- * @return moduleId
+ * Module identifier used to key in-loader collections.
+ * @typedef {unknown} ModuleId
  */
-function resolve(toImport: string, referrer: string): string;
+
+/**
+ * Resolve an import string to a module identifier.
+ * 
+ * @param {string} toImport exact argument to `import`
+ * @param {ModuleId} referrer base for the importing module
+ * @return {ModuleId} new identity for the imported module
+ */
+function resolve(toImport: string, referrer: ModuleId): ModuleId;
 ```
 
 <dt>Location
@@ -127,10 +134,15 @@ function resolve(toImport: string, referrer: string): string;
 
 ```js
 /**
- * @param moduleId the unique module identifier to locate
- * @return URL
+ * Communicate a location to the retrieve system.
+ * @typedef {unknown} ModuleLocation
  */
-function locate(moduleId: string): string
+
+/**
+ * @param {ModuleId} moduleId the module identifier to locate
+ * @return {ModuleLocation} the location of the module
+ */
+function locate(moduleId: string): Promise<ModuleLocation>;
 ```
 
 <dt>Retrieval
@@ -139,14 +151,16 @@ function locate(moduleId: string): string
 > **Note**: This is where context-based security/consistency checking would take place, and would likely include source text parsing and static pre-linking (ie for all relatively scoped resources).
 
 ```js
-// This record type is implementation-defined.
-type ModuleLinkageRecord = { moduleFunctor: string };
+/**
+ * Communicate a retrieved module to the linker.
+ * @typedef {unknown} ModuleLinkageRecord
+ */
 
 /**
  * @param url the URL to retrieve
  * @return Record describing module's linking requirements
  */
-function retrieve(url: string): Promise<ModuleLinkageRecord>
+function retrieve(location: ModuleLocation): Promise<ModuleLinkageRecord>;
 ```
 
 <dt>Linking
@@ -156,33 +170,39 @@ function retrieve(url: string): Promise<ModuleLinkageRecord>
 > **Note**: This is ideally where augmentation (ie instrumentation) would take place.
 
 ```js
-// This record type can contain additional information.
+// Provide linker hooks that are specific to the container.
+type ModuleContainer = {
+  // Create a module instance for a linkage record in this container.
+  instantiate(moduleId: ModuleId, linkageRecord: ModuleLinkageRecord): ModuleInstance;
+  // Optionally delegate to another container.
+  containerFor?: (moduleId: ModuleId) => ModuleContainer;
+};
+
 type ModuleInstance = {
-  initialize(): Promise<ModuleNamespace>;
+  // The initializer must be an idempotent function, returning a namespace.
+  initialize(): Promise<Record<string, unknown>>;
 };
 
 /**
- * @param moduleLinkageMap map from a moduleId to its ModuleLinkageRecord
- * @param moduleId the root of this linkage graph
- * @param evaluator the evaluation function for the moduleFunctor
- * @param preEndowments module-specific endowments for the moduleFunctor
- * @param registry map from a moduleId to its ModuleInstance
- * @return moduleId's ModuleInstance
+ * @param {Map<ModuleId, ModuleLinkageRecord>} moduleLinkageMap the linkage information for this graph
+ * @param {ModuleId} moduleId the root of this linkage graph
+ * @param {ModuleContainer} container where to instantiate the root
+ * @return {ModuleInstance} the module instance ready to initialize
  */
-function link(moduleLinkageMap, moduleId, evaluator, preEndowments = {}, registry = new Map()): ModuleInstance;
+function link(moduleLinkageMap: Map<ModuleId, ModuleLinkageRecord>, moduleId: ModuleId, container: ModuleContainer): ModuleInstance;
 ```
 
 <dt>Initialization
 
-<dd>The operation used to initialized the exposed namespace, by synthetic binding or evaluation which could also be inclusive of side-effects.
+<dd>The operation used to initialize the exposed namespace, by synthetic binding or evaluation which could also be inclusive of side-effects.
 
-> **Note**: At this point, it is essentially to assume that all preceding module loading operations across the entire module graph would have successfully completed and that all that all related module records have been sealed.
+> **Note**: At this point, it is essential to assume that all preceding module loading operations across the entire module graph would have successfully completed and that all related module records have been sealed.
 
 ```js
 /**
  * Call the initialize() method, which returns a Promise for the ModuleNamespace object.
  */
-const ns = await ModuleInstance.initialize();
+const ns = await moduleInstance.initialize();
 ```
 </dl>
 
